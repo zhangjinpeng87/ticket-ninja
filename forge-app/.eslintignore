@@ -1,0 +1,6 @@
+node_modules/
+dist/
+build/
+src/ai-assistant-ui/build/
+src/ai-assistant-ui/dist/
+

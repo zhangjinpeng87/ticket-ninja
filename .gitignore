@@ -1,0 +1,24 @@
+# macOS
+.DS_Store
+
+# Node
+node_modules/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp.*
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.env
+
+# Forge build
+forge-app/out/
+forge-app/dist/
+forge-app/build/
+
+# VSCode
+.vscode/

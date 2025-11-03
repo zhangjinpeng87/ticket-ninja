@@ -1,0 +1,19 @@
+{
+  "name": "ticket-ninja-forge-app",
+  "private": true,
+  "workspaces": [
+    "src/ai-assistant-ui"
+  ],
+  "scripts": {
+    "build": "npm --workspace src/ai-assistant-ui run build",
+    "start": "npm --workspace src/ai-assistant-ui run start"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "typescript": "^5.4.2"
+  },
+  "dependencies": {
+    "@forge/api": "^6.1.5",
+    "@forge/resolver": "^1.7.1"
+  }
+}

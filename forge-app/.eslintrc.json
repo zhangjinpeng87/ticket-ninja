@@ -1,0 +1,29 @@
+{
+  "root": true,
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "build/**",
+    "src/ai-assistant-ui/build/**",
+    "src/ai-assistant-ui/dist/**"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": null
+  },
+  "overrides": [
+    {
+      "files": ["src/**/*.ts", "!src/ai-assistant-ui/build/**"],
+      "parserOptions": {
+        "project": "./tsconfig.json"
+      }
+    },
+    {
+      "files": ["**/*.js", "**/*.jsx", "src/ai-assistant-ui/build/**"],
+      "parser": "espree",
+      "parserOptions": {}
+    }
+  ]
+}
+

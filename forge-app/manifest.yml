@@ -1,0 +1,32 @@
+modules:
+  jira:globalPage:
+    - key: ticket-ninja-ai-assistant
+      resource: ai-assistant-ui
+      resolver:
+        function: resolver
+      title: AI Assistant
+      icon: https://developer.atlassian.com/platform/forge/images/forge-icon.svg
+  function:
+    - key: resolver
+      handler: index.handler
+resources:
+  - key: ai-assistant-ui
+    path: build/ui
+    tunnel:
+      port: 3000
+app:
+  id: ari:cloud:ecosystem::app/81ced5ee-da37-4a1d-91c5-aecdef8bbc27
+  runtime:
+    name: nodejs20.x
+permissions:
+  scopes:
+    - read:jira-user
+    - read:jira-work
+    - read:confluence-content.summary
+    - read:confluence-content.all
+    - storage:app
+    - manage:jira-configuration
+  external:
+    fetch:
+      backend:
+        - 'https://violet-jokes-cut.loca.lt'
