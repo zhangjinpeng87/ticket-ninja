@@ -1,11 +1,16 @@
 modules:
-  jira:globalPage:
+  jira:issuePanel:
     - key: ticket-ninja-ai-assistant
       resource: ai-assistant-ui
       resolver:
         function: resolver
-      title: AI Assistant
-      icon: https://developer.atlassian.com/platform/forge/images/forge-icon.svg
+      title: Ticket-Ninja
+      icon: "🤖"
+      # Optional: Filter to specific issue types
+      # Note: For JSM-specific filtering, you can also check issue type programmatically in the UI
+      # To show on all Jira issues, you can add:
+      # conditions:
+      #   - key: jira
   function:
     - key: resolver
       handler: index.handler
@@ -29,4 +34,4 @@ permissions:
   external:
     fetch:
       backend:
-        - 'https://violet-jokes-cut.loca.lt'
+        - 'https://slimy-shoes-smoke.loca.lt'
