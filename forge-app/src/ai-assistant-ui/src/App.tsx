@@ -42,23 +42,69 @@ export const App: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Fetch issue context when component mounts
+  // Load messages from Forge Storage API
+  const loadMessages = async (issueKey: string): Promise<Message[]> => {
+    try {
+      if (typeof invoke === 'function') {
+        const response = await invoke('getMessages', { issueKey }) as any;
+        if (response?.ok && response?.data) {
+          // Convert timestamp strings back to Date objects
+          return response.data.map((msg: any) => ({
+            ...msg,
+            timestamp: new Date(msg.timestamp)
+          }));
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to load messages from storage:', err);
+    }
+    return [];
+  };
+
+  // Save messages to Forge Storage API
+  const saveMessagesToStorage = async (msgs: Message[], issueKey: string) => {
+    try {
+      if (typeof invoke === 'function') {
+        await invoke('saveMessages', { issueKey, messages: msgs });
+      }
+    } catch (err) {
+      console.warn('Failed to save messages to storage:', err);
+    }
+  };
+
+  // Fetch issue context and load messages when component mounts
   useEffect(() => {
-    async function fetchIssueContext() {
+    async function fetchIssueContextAndMessages() {
       try {
         if (typeof invoke === 'function') {
           // Fetch issue details - context is automatically available in resolver
           const response = await invoke('getIssueContext', {}) as any;
           if (response?.ok && response?.data) {
-            setIssueContext(response.data);
+            const context = response.data;
+            setIssueContext(context);
+            
+            // Load messages for this issue from Forge Storage
+            if (context.issueKey) {
+              const savedMessages = await loadMessages(context.issueKey);
+              if (savedMessages.length > 0) {
+                setMessages(savedMessages);
+              }
+            }
           }
         }
       } catch (err) {
         console.warn('Failed to fetch issue context:', err);
       }
     }
-    fetchIssueContext();
+    fetchIssueContextAndMessages();
   }, []);
+
+  // Save messages whenever they change
+  useEffect(() => {
+    if (messages.length > 0 && issueContext?.issueKey) {
+      saveMessagesToStorage(messages, issueContext.issueKey);
+    }
+  }, [messages, issueContext?.issueKey]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {

@@ -1,4 +1,4 @@
-import api, { fetch } from '@forge/api';
+import api, { fetch, storage } from '@forge/api';
 
 interface AnalyzePayload {
   queryText?: string;
@@ -9,7 +9,15 @@ interface AnalyzePayload {
 export async function handleAnalyze(req: { payload: AnalyzePayload; context: any }) {
   const payload = req.payload || {};
   const issueContext = req.context || {};
-  const gatewayUrl = process.env.AI_GATEWAY_URL || 'http://localhost:8000';
+  // Forge requires HTTPS - use localtunnel or ngrok for local development
+  // Set AI_GATEWAY_URL environment variable: forge variables set AI_GATEWAY_URL https://your-tunnel-url.loca.lt
+  const gatewayUrl = process.env.AI_GATEWAY_URL;
+  if (!gatewayUrl) {
+    return {
+      ok: false,
+      error: 'AI_GATEWAY_URL environment variable is not set. Please set it using: forge variables set AI_GATEWAY_URL https://your-tunnel-url.loca.lt'
+    };
+  }
   const endpoint = `${gatewayUrl}/analyze`;
 
   // TODO: If screenshotId present, fetch media via Forge Media API once wired
@@ -66,4 +74,50 @@ export async function getIssueContext(req: { payload: { issueKey?: string }; con
       // Additional fields can be fetched via API if needed
     }
   };
+}
+
+export async function getMessages(req: { payload: { issueKey: string } }) {
+  const { issueKey } = req.payload;
+  
+  if (!issueKey) {
+    return { ok: false, error: 'Issue key is required' };
+  }
+
+  try {
+    const storageKey = `messages-${issueKey}`;
+    const messages = await storage.get(storageKey);
+    
+    return {
+      ok: true,
+      data: messages || []
+    };
+  } catch (err: any) {
+    return {
+      ok: false,
+      error: `Failed to load messages: ${err.message}`
+    };
+  }
+}
+
+export async function saveMessages(req: { payload: { issueKey: string; messages: any[] } }) {
+  const { issueKey, messages } = req.payload;
+  
+  if (!issueKey) {
+    return { ok: false, error: 'Issue key is required' };
+  }
+
+  try {
+    const storageKey = `messages-${issueKey}`;
+    await storage.set(storageKey, messages);
+    
+    return {
+      ok: true,
+      data: { success: true }
+    };
+  } catch (err: any) {
+    return {
+      ok: false,
+      error: `Failed to save messages: ${err.message}`
+    };
+  }
 }

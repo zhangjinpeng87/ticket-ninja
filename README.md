@@ -2,6 +2,8 @@
 
 This monorepo contains an Atlassian Forge app for Jira and an external AI Gateway (FastAPI) that together enable an AI assistant to analyze error logs or screenshots, retrieve similar resolved tickets or knowledge base articles, and synthesize grounded answers with citations and confidence scores.
 
+![Ticket-Ninja](resources/ticket-ninja.png)
+
 ## Structure
 
 - `forge-app/` – Forge app (TypeScript)
