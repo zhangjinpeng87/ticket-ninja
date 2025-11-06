@@ -4,7 +4,9 @@ pydantic==2.9.2
 email-validator>=2.0.0
 numpy==2.1.2
 scikit-learn==1.5.2
-# Placeholders for OCR/transformers; pin later as needed
-# easyocr
+httpx==0.27.0
+Pillow==10.4.0
+easyocr==1.7.1
+# Placeholders for transformers; pin later as needed
 # transformers
 # sentence-transformers

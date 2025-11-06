@@ -32,7 +32,7 @@ async def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
 
     screenshot_insights = None
     if req.screenshot_id:
-        screenshot_insights = parse_screenshot(req.screenshot_id)
+        screenshot_insights = await parse_screenshot(req.screenshot_id)
         # Optionally merge insights into text
         if screenshot_insights and screenshot_insights.get("error_summary"):
             text = (text + "\n\n" + screenshot_insights["error_summary"]).strip()

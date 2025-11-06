@@ -1,0 +1,52 @@
+{
+  "sample_python_error.png": {
+    "error_summary": "Detected error: KeyError",
+    "full_text": "Traceback (most recent call last):\n  File \"app.py\", line 42, in process_request\n    result = calculate_total(items)\n  File \"utils.py\", line 18, in calculate_total\n    return sum(item['price'] for item in items)\nKeyError: 'price'\n\nError: Missing 'price' key in item dictionary\n    at utils.py:18",
+    "error_lines": [
+      "Traceback (most recent call last):",
+      "KeyError: 'price'",
+      "Error: Missing 'price' key in item dictionary"
+    ],
+    "confidence": 0.8
+  },
+  "sample_java_error.png": {
+    "error_summary": "Detected error: NullPointerException",
+    "full_text": "java.lang.NullPointerException\n    at com.example.service.PaymentService.processPayment(PaymentService.java:125)\n    at com.example.controller.PaymentController.handleRequest(PaymentController.java:45)\n    at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n    at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n    \nCaused by: java.sql.SQLException: Connection timeout\n    at com.example.db.Database.getConnection(Database.java:89)\n    ... 5 more",
+    "error_lines": [
+      "java.lang.NullPointerException",
+      "at com.example.service.PaymentService.processPayment(PaymentService.java:125)",
+      "Caused by: java.sql.SQLException: Connection timeout"
+    ],
+    "confidence": 0.8
+  },
+  "sample_http_error.png": {
+    "error_summary": "Detected error: TimeoutError",
+    "full_text": "[ERROR] 2024-01-15 14:32:18 - Request failed\nHTTP Status: 500 Internal Server Error\nEndpoint: POST /api/payments\nRequest ID: req-abc123-xyz789\n\nError Details:\n- Message: TimeoutError: Connection timeout after 30s\n- Service: payment-gateway\n- Retry Count: 3\n- Failed at: 2024-01-15T14:32:18Z",
+    "error_lines": [
+      "[ERROR] 2024-01-15 14:32:18 - Request failed",
+      "HTTP Status: 500 Internal Server Error",
+      "TimeoutError: Connection timeout after 30s"
+    ],
+    "confidence": 0.8
+  },
+  "sample_database_error.png": {
+    "error_summary": "Detected error: Connection refused",
+    "full_text": "SQL Error: Connection refused\nDatabase: production_db\nHost: db.example.com:5432\nUser: app_user\n\nERROR: connection to server at \"db.example.com\" (192.168.1.100),\nport 5432 failed: Connection refused\n    Is the server running on that host and accepting\n    TCP/IP connections on that port?\n\nFATAL: could not connect to database \"production_db\"\nRetry attempt: 3/5",
+    "error_lines": [
+      "SQL Error: Connection refused",
+      "ERROR: connection to server at \"db.example.com\" (192.168.1.100),",
+      "port 5432 failed: Connection refused",
+      "FATAL: could not connect to database \"production_db\""
+    ],
+    "confidence": 0.8
+  },
+  "sample_simple_error.png": {
+    "error_summary": "Detected error: File not found",
+    "full_text": "Error: File not found\nCannot open file: /path/to/config.json\nPlease check the file path and permissions.",
+    "error_lines": [
+      "Error: File not found"
+    ],
+    "confidence": 0.7
+  }
+}
+

@@ -11,7 +11,10 @@ This monorepo contains an Atlassian Forge app for Jira and an external AI Gatewa
   - Resolver functions to call Jira/Confluence and the AI Gateway
 - `ai-gateway/` – External AI Gateway (FastAPI)
   - Endpoints and service stubs for Intent → Retriever → RAG → LLM
-  - Screenshot parsing stub
+  - Screenshot parsing service that calls OCR service
+- `ocr-service/` – OCR Service (FastAPI)
+  - Standalone service for extracting error logs from screenshots
+  - Uses EasyOCR for text recognition and error pattern detection
 - `docker/` – Dockerfiles
 
 ## Features
@@ -31,15 +34,40 @@ This monorepo contains an Atlassian Forge app for Jira and an external AI Gatewa
 2) Configure environment
 - Copy `ai-gateway/.env.example` to `ai-gateway/.env` and adjust as needed
 
-3) Run AI Gateway (local)
+3) Run OCR Service (required for screenshot processing)
+
+**Option A: Direct Python**
+```bash
+cd ocr-service
+pip install -r requirements.txt
+python main.py
+# Or use the startup script:
+# ./start.sh
+```
+
+**Option B: Using Docker**
+```bash
+# Build and run from project root:
+docker build -f docker/Dockerfile.ocr-service -t ticket-ninja-ocr-service .
+docker run -p 8001:8001 ticket-ninja-ocr-service
+
+# Or use docker-compose (runs both services):
+cd docker
+docker-compose up
+```
+
+The OCR service runs on port 8001 by default. Note: EasyOCR will download model files (~100MB) on first run.
+
+4) Run AI Gateway (local)
 ```bash
 cd ai-gateway
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
+export OCR_SERVICE_URL=http://localhost:8001  # Point to OCR service
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-4) Deploy Forge app
+5) Deploy Forge app
 ```bash
 cd forge-app
 npm install
@@ -51,7 +79,7 @@ forge deploy
 forge install
 ```
 
-5) Configure allowed outbound links
+6) Configure allowed outbound links
 - In `forge-app/manifest.yml`, ensure the AI Gateway URL is listed under `permissions.external.fetch`.
 
 ## Development Notes
@@ -59,6 +87,7 @@ forge install
 - UI is a minimal Custom UI React app using `@forge/bridge` to call resolver.
 - Resolver proxies to the AI Gateway `/analyze` endpoint and will later add Jira/Confluence lookups.
 - AI Gateway returns structured JSON: `answer`, `citations`, `confidence`, `kb_suggestions`, `debug`.
+- OCR Service extracts text from screenshots and identifies error log patterns using EasyOCR.
 
 ## Roadmap
 
