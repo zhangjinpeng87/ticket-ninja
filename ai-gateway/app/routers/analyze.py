@@ -17,6 +17,7 @@ class Citation(BaseModel):
 class AnalyzeRequest(BaseModel):
     query_text: Optional[str] = None
     screenshot_id: Optional[str] = None
+    tenant_id: Optional[str] = None  # Tenant ID for tenant-specific knowledge base search
     context: Dict[str, Any] = {}
 
 class AnalyzeResponse(BaseModel):
@@ -37,8 +38,13 @@ async def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
         if screenshot_insights and screenshot_insights.get("error_summary"):
             text = (text + "\n\n" + screenshot_insights["error_summary"]).strip()
 
+    # Merge tenant_id into context if provided
+    context = req.context.copy()
+    if req.tenant_id:
+        context["tenant_id"] = req.tenant_id
+
     intent = classify_intent(text)
-    candidates = retrieve_candidates(text, req.context)
+    candidates = retrieve_candidates(text, context)
     synth = synthesize_answer(text, candidates, intent)
 
     return AnalyzeResponse(
@@ -49,6 +55,9 @@ async def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
         debug={
             "intent": intent,
             "num_candidates": len(candidates),
+            "num_common_kb": len([c for c in candidates if c.get("kb_type") == "common"]),
+            "num_tenant_kb": len([c for c in candidates if c.get("kb_type") == "tenant"]),
             "screenshot": screenshot_insights,
+            "tenant_id": req.tenant_id,
         },
     )

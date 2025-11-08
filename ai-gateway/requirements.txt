@@ -7,6 +7,6 @@ scikit-learn==1.5.2
 httpx==0.27.0
 Pillow==10.4.0
 easyocr==1.7.1
-# Placeholders for transformers; pin later as needed
-# transformers
-# sentence-transformers
+sentence-transformers==2.7.0
+torch>=2.0.0
+qdrant-client==1.7.0

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import analyze
+from .routers import analyze, knowledge_base
 
 app = FastAPI(title="Ticket Ninja AI Gateway", version="0.1.0")
 
@@ -17,3 +17,4 @@ async def health():
     return {"ok": True}
 
 app.include_router(analyze.router)
+app.include_router(knowledge_base.router)
