@@ -5,10 +5,13 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-COPY ai-gateway/requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir -r /app/requirements.txt
+COPY ai-gateway/requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
-COPY ai-gateway /app
+COPY shared_kb /app/shared_kb
+COPY ai-gateway /app/ai-gateway
+
+WORKDIR /app/ai-gateway
 
 EXPOSE 8000
 

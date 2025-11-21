@@ -1,0 +1,20 @@
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    POETRY_VIRTUALENVS_CREATE=false
+
+WORKDIR /app
+
+COPY data-foundry/requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
+
+COPY shared_kb /app/shared_kb
+COPY data-foundry /app/data-foundry
+
+WORKDIR /app/data-foundry
+
+EXPOSE 8100
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8100"]
+

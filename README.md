@@ -13,6 +13,8 @@ This monorepo contains an Atlassian Forge app for Jira and an external AI Gatewa
   - Intent classification → knowledge base retrieval → RAG synthesis pipeline
   - Dual knowledge bases (common + tenant) backed by Qdrant vector database
   - Screenshot parsing service that calls the OCR service
+- `data-foundry/` – Documentation ingestion service (FastAPI)
+  - Crawls technical docs, chunks text, embeds content, and stores it in Qdrant (common or tenant categories)
 - `ocr-service/` – OCR Service (FastAPI)
   - Standalone service for extracting error logs from screenshots
   - Uses EasyOCR for text recognition and error pattern detection
@@ -24,6 +26,7 @@ This monorepo contains an Atlassian Forge app for Jira and an external AI Gatewa
 - Backend: Jira/Confluence API integration (stubs), proxy to AI Gateway
 - Gateway: Intent classification, dual knowledge base retrieval (common + tenant), RAG synthesis
 - Vector Store: Qdrant with isolated collections per tenant (`kb_tenant_{tenant_id}`) and category-specific collections for the common KB (`kb_common_{category}`)
+- Data Foundry: Crawl & ingest technical documentation directly into the shared Qdrant knowledge base
 - Response: AI answer, citations, confidence, KB suggestions, debug metadata
 
 ## Quick Start
@@ -76,7 +79,15 @@ export OCR_SERVICE_URL=http://localhost:8001  # Point to OCR service
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-6) Deploy Forge app
+6) (Optional) Run Data Foundry (documentation ingestion)
+```bash
+cd data-foundry
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --host 0.0.0.0 --port 8100 --reload
+```
+
+7) Deploy Forge app
 ```bash
 cd forge-app
 npm install
@@ -88,7 +99,7 @@ forge deploy
 forge install
 ```
 
-7) Configure allowed outbound links
+8) Configure allowed outbound links
 - In `forge-app/manifest.yml`, ensure the AI Gateway URL is listed under `permissions.external.fetch`.
 
 ## Knowledge Base Docs
@@ -96,6 +107,7 @@ forge install
 - `ai-gateway/KNOWLEDGE_BASE.md` – Knowledge base architecture & usage
 - `ai-gateway/QDRANT_SETUP.md` – Running Qdrant locally or in production
 - `ai-gateway/QDRANT_MIGRATION.md` – Migration notes from in-memory store
+- `data-foundry/README.md` – Data Foundry ingestion service
 
 ## Development Notes
 
@@ -103,6 +115,7 @@ forge install
 - Resolver proxies to the AI Gateway `/analyze` endpoint and can enrich Jira/Confluence lookups.
 - AI Gateway retrieves from both the shared knowledge base and tenant-specific history via Qdrant, then synthesizes grounded responses.
 - OCR Service extracts text from screenshots and identifies error log patterns using EasyOCR.
+- Data Foundry ingests product documentation and feeds the same Qdrant-backed knowledge base.
 
 ## Roadmap
 

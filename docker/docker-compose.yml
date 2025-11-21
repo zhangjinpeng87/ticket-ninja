@@ -53,5 +53,17 @@ services:
       timeout: 10s
       retries: 3
 
+  data-foundry:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.data-foundry
+    container_name: ticket-ninja-data-foundry
+    ports:
+      - "8100:8100"
+    environment:
+      - QDRANT_URL=http://qdrant:6333
+    depends_on:
+      qdrant:
+        condition: service_healthy
 volumes:
   qdrant_storage:

@@ -230,6 +230,12 @@ docker-compose up
    - For code: `microsoft/codebert-base`
    - Fine-tune on your specific IT issue data
 
+## Data Foundry Ingestion
+
+- The `data-foundry/` service can crawl technical documentation sites, extract readable content, chunk the text, and convert each chunk into a `KnowledgeBaseEntry`.
+- Use the `/ingest` endpoint (see `data-foundry/README.md`) to populate either the common knowledge base (per category collection) or a tenant-specific collection.
+- Data Foundry uses the same shared `shared_kb` modules, so ingested documents are immediately retrievable by the AI Gateway.
+
 4. **Scaling**: 
    - Batch embedding generation
    - Async indexing for new entries

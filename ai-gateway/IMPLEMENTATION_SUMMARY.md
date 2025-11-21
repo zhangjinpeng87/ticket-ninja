@@ -8,19 +8,19 @@ A dual knowledge base system has been implemented that combines:
 
 ## What Was Implemented
 
-### 1. Data Models (`app/models/knowledge_base.py`)
+### 1. Data Models (`shared_kb/models.py`)
 - `KnowledgeBaseEntry`: Core model with phenomenon, root cause analysis, and solutions
 - `KnowledgeBaseType`: Enum for COMMON vs TENANT
 - `ITIssueCategory`: Categories (DATABASE, KUBERNETES, CLOUD_INFRA, etc.)
 
-### 2. Embedding Service (`app/services/embeddings.py`)
+### 2. Embedding Service (`shared_kb/embeddings.py`)
 - Uses `sentence-transformers` (all-MiniLM-L6-v2) for generating embeddings
 - Supports batch and single text embedding generation
 - Cosine similarity calculation
 
-### 3. Vector Store (`app/services/vector_store.py`)
-- In-memory vector store with cosine similarity search
-- Separates common and tenant knowledge bases
+### 3. Vector Store (`shared_kb/vector_store.py`)
+- Qdrant-based vector store with cosine similarity search
+- Separate collections per tenant (`kb_tenant_{tenant_id}`) and per common category (`kb_common_{category}`)
 - Efficient batch operations for adding entries
 
 ### 4. Knowledge Base Service (`app/services/knowledge_base.py`)
@@ -53,6 +53,11 @@ A dual knowledge base system has been implemented that combines:
 - Example script to populate knowledge bases
 - Includes sample entries for common KB (PostgreSQL, Kubernetes, AWS, MySQL)
 - Includes sample entries for tenant KB (payment service, connection leaks)
+
+### 10. Data Foundry Service (`data-foundry/`)
+- FastAPI ingestion service that crawls documentation, extracts readable content, chunks text, and converts chunks into knowledge base entries
+- Reuses shared embeddings/vector store modules to write directly into Qdrant collections
+- Supports targeting specific IT categories and tenant/private scopes
 
 ## Key Features
 
@@ -114,36 +119,34 @@ Request → Analyze Endpoint
 
 ## Next Steps for Production
 
-1. **Replace In-Memory Store**: Use proper vector database (Milvus, Weaviate, ChromaDB)
-2. **Add Persistence**: Store entries in database (PostgreSQL/MongoDB)
-3. **LLM Integration**: Replace placeholder RAG with LangChain + GPT-4
-4. **Authentication**: Add auth for KB management endpoints
-5. **Monitoring**: Add logging and metrics
-6. **Batch Processing**: Async indexing for new entries
-7. **Caching**: Cache frequently accessed entries
+1. **LLM Integration**: Replace placeholder RAG with LangChain + GPT-4
+2. **Authentication**: Add auth for KB management and ingestion endpoints
+3. **Monitoring**: Add logging and metrics for ingestion + retrieval
+4. **Batch Processing**: Async indexing for large ingestions
+5. **Caching**: Cache frequently accessed entries
 
 ## Dependencies Added
 
 - `sentence-transformers==2.7.0`: For embedding generation
 - `torch>=2.0.0`: Required by sentence-transformers
+- `qdrant-client==1.7.0`: Vector database integration
 
 ## Files Created/Modified
 
 **Created:**
-- `app/models/knowledge_base.py`
+- `shared_kb/` (shared models, embeddings, vector store)
 - `app/models/__init__.py`
-- `app/services/embeddings.py`
-- `app/services/vector_store.py`
 - `app/services/knowledge_base.py`
 - `app/routers/knowledge_base.py`
 - `scripts/populate_kb_examples.py`
 - `KNOWLEDGE_BASE.md`
 - `IMPLEMENTATION_SUMMARY.md`
+- `data-foundry/` (Data Foundry ingestion service)
 
 **Modified:**
 - `app/services/retriever.py`: Updated to use knowledge base service
 - `app/services/rag.py`: Enhanced to combine results from both KBs
 - `app/routers/analyze.py`: Added tenant_id parameter
 - `app/main.py`: Added knowledge_base router
-- `requirements.txt`: Added sentence-transformers and torch
+- `requirements.txt`: Added sentence-transformers, torch, qdrant-client
 

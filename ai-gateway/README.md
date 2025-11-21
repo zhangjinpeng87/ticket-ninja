@@ -79,6 +79,7 @@ This launches Qdrant, OCR service, and the AI Gateway with the correct networkin
 - [Knowledge Base Overview](./KNOWLEDGE_BASE.md)
 - [Qdrant Setup Guide](./QDRANT_SETUP.md)
 - [Qdrant Migration Notes](./QDRANT_MIGRATION.md)
+- [Data Foundry Service](../data-foundry/README.md)
 
 ## Notes
 
